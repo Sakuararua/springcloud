@@ -1,26 +1,36 @@
 server:
   port: 9002
-spring:
+spring:   # 服务名称
   application:
     name: myshop-web
-  zipkin:
-    base-url: http://localhost:9041
-    sender:
-      type: web
-  sleuth:
-    sampler:
-      probability: 1
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  datasource:
+    url: jdbc:mysql://localhost:3306/springcloud?useUnicode=true&characterEncoding=utf8&characterSetResults=utf8&useSSL=false
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: root
+  jpa:
+    show-sql: true # 是否打印sql语句
+    generate-ddl: true # 是否自动建表
+    database: mysql # jpa连接的数据库类型
+
+
 eureka:
   client:
     register-with-eureka: true # 作为客户端需要注册到Eureka
     fetch-registry: true  # 作为客户端需要从Eureka获取注册信息
     service-url: # 客户端注册地址
       defaultZone: http://localhost:8888/eureka
-## 修改Ribbon的负载均衡算法
-#myshop-user:
-#  ribbon:
-#    NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule
-#开启hystrix
+  instance:
+    # 优先使用该服务的IP地址注册到Eureka，在生产环境建议改为true
+    prefer-ip-address: true
+myshop-user:   # Ribbon 配置
+  ribbon:
+    NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule
+
+
 feign:
-  hystrix:
+  circuitbreaker:
     enabled: true
